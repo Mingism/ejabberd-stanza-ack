@@ -18,7 +18,7 @@ This module will send message acknowledgements on behalf of the recipient and al
 
 License
 ---------
-Copyright (c) 2013-Present Kay Ming Tsar.
+Copyright (c) 2013-Present Kay Tsar.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
