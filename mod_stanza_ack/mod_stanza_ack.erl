@@ -30,6 +30,7 @@
 
 -behaviour(gen_mod).
 
+-include("logger.hrl").
 -include("ejabberd.hrl").
 -include("jlib.hrl").
 
