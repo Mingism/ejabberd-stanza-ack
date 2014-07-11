@@ -6,18 +6,23 @@ This module will send a confirmation/acknowledgement message to your sender when
 Installation instructions
 ---------
 First we need to compile this .erl file into a .beam file by running the following command:
+
 erlc -I ${EJABBERD_SRC} mod_stanza_ack.erl
+
 {EJABBERD_SRC} must be replaced with the actual location of your ejabberd source files, e.g. /home/foobar/ejabberd/src. An example of this folder can be found at https://github.com/processone/ejabberd/tree/13.03-beta1/src
 
 Move the compiled .beam file to the ebin folder of ejabberd (e.g. /lib/ejabberd/ebin) using the following command:
+
 mv mod_stanza_ack.beam /lib/ejabberd/ebin
 
 Add the module to the ejabberd.cfg to the existing list of modules:
+
 ...
   {mod_stanza_ack,  [{host, "foobar.com"}]},
 ...
 
 Restart ejabberd:
+
 ejabberdctl restart
 
 Compatibility
