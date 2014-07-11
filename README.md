@@ -9,7 +9,7 @@ Installation instructions
 
     erlc -I ${EJABBERD_SRC} mod_stanza_ack.erl
 
-{EJABBERD_SRC} must be replaced with the actual location of your ejabberd source files, e.g. /home/foobar/ejabberd/src. An example of this folder can be found at https://github.com/processone/ejabberd/tree/13.03-beta1/src
+    {EJABBERD_SRC} must be replaced with the actual location of your ejabberd source files, e.g. /home/foobar/ejabberd/src.     An example of this folder can be found at https://github.com/processone/ejabberd/tree/13.03-beta1/src
 
 * Move the compiled .beam file to the ebin folder of ejabberd (e.g. /lib/ejabberd/ebin) using the following command:
 
@@ -17,11 +17,11 @@ Installation instructions
 
 * Add the module to the ejabberd.cfg to the existing list of modules:
 
-{mod_stanza_ack,  [{host, "foobar.com"}]}
+    {mod_stanza_ack,  [{host, "foobar.com"}]}
 
 * Restart ejabberd:
 
-ejabberdctl restart
+    ejabberdctl restart
 
 Compatibility
 ---------
