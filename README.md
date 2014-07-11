@@ -17,9 +17,7 @@ mv mod_stanza_ack.beam /lib/ejabberd/ebin
 
 Add the module to the ejabberd.cfg to the existing list of modules:
 
-...
-  {mod_stanza_ack,  [{host, "foobar.com"}]},
-...
+{mod_stanza_ack,  [{host, "foobar.com"}]}
 
 Restart ejabberd:
 
