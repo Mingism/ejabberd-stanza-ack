@@ -25,7 +25,7 @@ Installation instructions
 
 Compatibility
 ---------
-This is an ejabberd module for ejabberd 13.03 and higher. 
+This is an ejabberd module for ejabberd 13.xx 
 
 Version history
 ---------
