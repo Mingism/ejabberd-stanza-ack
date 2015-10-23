@@ -30,41 +30,42 @@
 
 -behaviour(gen_mod).
 
+
 -include("logger.hrl").
 -include("ejabberd.hrl").
 -include("jlib.hrl").
 
--type host()	:: string().
--type name()	:: string().
--type value()	:: string().
--type opts()	:: [{name(), value()}, ...].
+-type host()    :: string().
+-type name()    :: string().
+-type value()   :: string().
+-type opts()    :: [{name(), value()}, ...].
 
 -define(NS_RECEIPTS, <<"urn:xmpp:receipts">>).
+-define(EJABBERD_DEBUG, true).
 
 %% ====================================================================
 %% API functions
 %% ====================================================================
 -export([start/2, stop/1]).
--export([on_user_send_packet/3, on_user_receive_packet/4, send_ack_response/5]).
+-export([on_user_send_packet/4, send_ack_response/5]).
 
 -spec start(host(), opts()) -> ok.
 start(Host, Opts) ->
 	mod_disco:register_feature(Host, ?NS_RECEIPTS),
 	ejabberd_hooks:add(user_send_packet, Host, ?MODULE, on_user_send_packet, 10),
-	ejabberd_hooks:add(user_receive_packet, Host, ?MODULE, on_user_receive_packet, 10),
 	ok.
 
 -spec stop(host()) -> ok.
 stop(Host) ->
 	ejabberd_hooks:delete(user_send_packet, Host, ?MODULE, on_user_send_packet, 10),
-	ejabberd_hooks:delete(user_receive_packet, Host, ?MODULE, on_user_receive_packet, 10),
 	ok.
 
 %% ====================================================================
 %% Internal functions
 %% ====================================================================
-on_user_send_packet(From, To, Packet) ->
-    RegisterFromJid = <<"sys@blabbling_dev">>, %used in ack stanza
+
+on_user_send_packet(Packet, _C2SState, From, To) ->
+    RegisterFromJid = <<"dev@mm.io">>, %used in ack stanza
 
     case xml:get_tag_attr_s(<<"type">>, Packet) of
         %%Case: Return ack that the chat message has been received by the server
@@ -78,21 +79,7 @@ on_user_send_packet(From, To, Packet) ->
         _ ->
         ok
     end,
-    ok.
-
- on_user_receive_packet(Jid, From, To, Packet) ->
-    ?DEBUG("Received packet: ~p",  [Packet]),
-    case xml:get_tag_attr_s(<<"type">>, Packet) of
-        %%Case: Return ack that the chat message has been received by the server
-        "chat" ->
-            RegisterFromJid = To, %used in the ack stanza
-            RegisterToJid = From, %used in the ack stanza
-            send_ack_response(From, To, Packet, RegisterFromJid, RegisterToJid);
-        %%TODO:Case: ack that the jingle for filetransfer has been received by the server
-        _ ->
-        ok
-    end,
-    ok.
+    Packet.
 
 send_ack_response(From, To, Pkt, RegisterFromJid, RegisterToJid) ->
     ReceiptId = xml:get_tag_attr_s(<<"id">>, Pkt),
