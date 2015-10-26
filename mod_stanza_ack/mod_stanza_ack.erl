@@ -87,6 +87,6 @@ send_ack_response(From, To, Pkt, RegisterFromJid, RegisterToJid) ->
               		    attrs = [{<<"from">>, From}, {<<"to">>, To}],
               		    children =
               			[#xmlel{name = <<"received">>,
-              				attrs = [{<<"xmlns">>, ?NS_RECEIPTS}, {<<"id">>, ReceiptId}],
+              				attrs = [{<<"xmlns">>, ?NS_RECEIPTS}, {<<"id">>, ReceiptId}, {<<"sent_to", To>>}],
               				children = []}]},
     ejabberd_router:route(jlib:string_to_jid(RegisterFromJid), RegisterToJid, XmlBody).
