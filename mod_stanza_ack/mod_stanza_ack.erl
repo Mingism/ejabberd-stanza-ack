@@ -83,10 +83,11 @@ on_user_send_packet(Packet, _C2SState, From, To) ->
 
 send_ack_response(From, To, Pkt, RegisterFromJid, RegisterToJid) ->
     ReceiptId = xml:get_tag_attr_s(<<"id">>, Pkt),
+    SentTo = jlib:string_to_jid(To),
     XmlBody = 	 #xmlel{name = <<"message">>,
               		    attrs = [{<<"from">>, From}, {<<"to">>, To}],
               		    children =
               			[#xmlel{name = <<"received">>,
-              				attrs = [{<<"xmlns">>, ?NS_RECEIPTS}, {<<"id">>, ReceiptId}, {<<"sent_to", To>>}],
+              				attrs = [{<<"xmlns">>, ?NS_RECEIPTS}, {<<"id">>, ReceiptId}, {<<"sent_to">>, SentTo}],
               				children = []}]},
     ejabberd_router:route(jlib:string_to_jid(RegisterFromJid), RegisterToJid, XmlBody).
