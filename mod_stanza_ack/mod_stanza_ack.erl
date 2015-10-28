@@ -47,7 +47,7 @@
 %% API functions
 %% ====================================================================
 -export([start/2, stop/1]).
--export([on_user_send_packet/4, send_ack_response/5]).
+-export([on_user_send_packet/4, send_ack_response/5, should_acknowledge/1]).
 
 -spec start(host(), opts()) -> ok.
 start(Host, Opts) ->
@@ -67,24 +67,33 @@ stop(Host) ->
 on_user_send_packet(Packet, _C2SState, From, To) ->
     RegisterFromJid = <<"dev@mm.io">>, %used in ack stanza
 
-    case xml:get_tag_attr_s(<<"type">>, Packet) of
-        %%Case: Return ack that the chat message has been received by the server
-        <<"chat">> ->
+    case should_acknowledge(Packet) of 
+        S when (S==true) ->
             RegisterToJid = From, %used in ack stanza
             send_ack_response(From, To, Packet, RegisterFromJid, RegisterToJid);
-        <<"groupchat">> ->
-            RegisterToJid = From, %used in ack stanza
-            send_ack_response(From, To, Packet, RegisterFromJid, RegisterToJid);
-        %%TODO:Case: ack that the jingle for filetransfer has been received by the server
-        _ ->
-        ok
+        false ->
+            ok
     end,
     Packet.
 
-send_ack_response(From, To, Pkt, RegisterFromJid, RegisterToJid) ->
-    ReceiptId = xml:get_tag_attr_s(<<"id">>, Pkt),
-    SentTo = jlib:string_to_jid(To),
-    XmlBody = 	 #xmlel{name = <<"message">>,
+should_acknowledge(#xmlel{name = <<"message">>} = Packet) ->
+    case {xml:get_attr_s(<<"type">>, Packet#xmlel.attrs),
+          xml:get_subtag_cdata(Packet, <<"body">>)} of
+        {<<"error">>, _} ->
+            false;
+        {_, <<>>} ->
+            %% Empty body
+            false;
+        _ ->
+            true
+    end;
+should_acknowledge(#xmlel{}) ->
+    false.
+
+send_ack_response(From, To, Packet, RegisterFromJid, RegisterToJid) ->
+    ReceiptId = xml:get_tag_attr_s(<<"id">>, Packet),
+    SentTo = jlib:jid_to_string(To),
+    XmlBody = #xmlel{name = <<"message">>,
               		    attrs = [{<<"from">>, From}, {<<"to">>, To}],
               		    children =
               			[#xmlel{name = <<"received">>,
